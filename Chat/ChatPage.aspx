@@ -54,7 +54,7 @@
         });
 
         function AddGlobalChatMsg() {
-            var chatService = new ServiceCall("AddGlobalChat", "{'message':'" + $('#txtMessage').val() + "'}");
+            var chatService = new ServiceCall("AddGlobalChat", "{'message':'" + Helper.htmlEscape($('#txtMessage').val()) + "'}");
             chatService.callService(addGlobalChat_Complete);
             scrollToBottom = true;
             //getGlobalChat();
@@ -82,6 +82,7 @@
             scope.globalChat = [];
             var i = 0;
             for (; i < msg.d.length; i++) {
+                msg.d[i].message = Helper.htmlUnescape(msg.d[i].message); //unEscape the message string
                 scope.globalChat.push(msg.d[i]);
             }
             scope.$apply();
