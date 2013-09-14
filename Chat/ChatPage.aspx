@@ -44,7 +44,6 @@
     </form>
 
     <script type ="text/javascript">
-        var scrollToBottom = false;
         $('#txtMessage').bind("keypress", function (e) {
             if (e.keyCode == 13) {
                 AddGlobalChatMsg();
@@ -56,7 +55,6 @@
         function AddGlobalChatMsg() {
             var chatService = new ServiceCall("AddGlobalChat", "{'message':'" + Helper.htmlEscape($('#txtMessage').val()) + "'}");
             chatService.callService(addGlobalChat_Complete);
-            scrollToBottom = true;
             //getGlobalChat();
         }
 
@@ -64,7 +62,6 @@
 
         function ContentLoaded() {
             updateChatArea();
-            scrollToBottom = true;
         }
 
         function updateChatArea() {
@@ -79,21 +76,40 @@
         function getGlobalChat_Complete(msg) {
             //$("#txtGlobalChat").val(msg.d);
             var scope = AngularScope();
+            var scroll = scrollBarAtBottom();
             scope.globalChat = [];
             var i = 0;
             for (; i < msg.d.length; i++) {
                 msg.d[i].message = Helper.htmlUnescape(msg.d[i].message); //unEscape the message string
                 scope.globalChat.push(msg.d[i]);
             }
-            scope.$apply();
-            if (scrollToBottom === true) {
-                setTimeout("$('#divMessages').scrollTop($('#divMessages')[0].scrollHeight);", 50);
+            scope.$apply();            
+            if (scroll === true) {
+                setTimeout("scrollToBottom();", 50);
             }
             setTimeout("getGlobalChat(false);", 100);
         }
 
+        function scrollToBottom() {
+            debugger;
+            $('#divMessages').scrollTop($('#divMessages')[0].scrollHeight);
+        }
+
         function AngularScope() {
             return angular.element($("#divMessages")).scope();
+        }
+
+        function scrollBarAtBottom() {
+            var divMessages = $("#divMessages");
+            var scrollTop = divMessages.scrollTop();
+            var height = divMessages.height();
+            var scrollHeight = divMessages[0].scrollHeight;
+            if (scrollTop >= scrollHeight - height) {
+                return true;
+            }
+            else {
+                return false;
+            }
         }
 
         window.addEventListener("DOMContentLoaded", ContentLoaded, false); 
