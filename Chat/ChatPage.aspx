@@ -91,7 +91,6 @@
         }
 
         function scrollToBottom() {
-            debugger;
             $('#divMessages').scrollTop($('#divMessages')[0].scrollHeight);
         }
 
